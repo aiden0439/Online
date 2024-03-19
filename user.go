@@ -28,6 +28,7 @@ func (this *User) ListenMessage() {
 	for {
 		msg := <-this.C
 		//fmt.Println(msg)
+		//zheshiyigexiugai
 		this.conn.Write([]byte(msg + "\n"))
 	}
 }
