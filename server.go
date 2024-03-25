@@ -55,11 +55,12 @@ func (this *Server) Start() {
 func (this *Server) Handler(conn net.Conn) {
 
 	//fmt.Println("链接建立成功")
-	user := NewUser(conn)
-	this.mapLock.Lock()
-	this.OnlineMap[user.Name] = user
-	this.mapLock.Unlock()
-	this.BroadCast(user, "已上线")
+	user := NewUser(conn, this)
+	//this.mapLock.Lock()
+	//this.OnlineMap[user.Name] = user
+	//this.mapLock.Unlock()
+	//this.BroadCast(user, "已上线")
+	user.Online()
 
 	//接受客户端发送的消息
 	go func() {
@@ -67,7 +68,7 @@ func (this *Server) Handler(conn net.Conn) {
 		for {
 			n, err := conn.Read(buf)
 			if n == 0 {
-				this.BroadCast(user, "下线")
+				user.Offline()
 				return
 			}
 			if err != nil && err != io.EOF {
@@ -77,7 +78,7 @@ func (this *Server) Handler(conn net.Conn) {
 			//提取用户的消息
 			msg := string(buf[:n-1])
 			//广播用户消息
-			this.BroadCast(user, msg)
+			user.DoMessage(msg)
 		}
 	}()
 }
