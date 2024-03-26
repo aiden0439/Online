@@ -42,8 +42,7 @@ func (this *Server) Start() {
 
 		conn, err := listener.Accept()
 		if err != nil {
-			//fmt.Println("listener accept err:", err)
-			continue
+			fmt.Println("listener accept err:", err)
 		}
 		//mt.Println("accept + 1")
 		go this.Handler(conn)

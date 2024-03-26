@@ -47,7 +47,23 @@ func (this *User) Offline() {
 
 // 用户处理消息的业务
 func (this *User) DoMessage(msg string) {
-	this.server.BroadCast(this, msg)
+	if msg == "who" {
+		this.server.mapLock.Lock()
+		for _, user := range this.server.OnlineMap {
+			onlineMap := "[" + user.Name + "]" + user.Name + ":" + "在线...\n"
+			this.SendMsg(onlineMap)
+		}
+		this.server.mapLock.Unlock()
+	} else {
+		this.server.BroadCast(this, msg)
+	}
+
+}
+
+func (this *User) SendMsg(msg string) {
+
+	this.conn.Write([]byte(msg))
+
 }
 
 func (this *User) ListenMessage() {
